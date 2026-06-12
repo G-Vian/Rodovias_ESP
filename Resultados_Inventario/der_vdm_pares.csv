@@ -1,0 +1,69 @@
+"SP","Rodovia","Trecho","mun_A","mun_B","VDM2024","split_ok"
+"SP008","Pedro Astenori Marigliani","Bragança Paulista-Pinhalzinho","Bragança Paulista","Pinhalzinho",25187,TRUE
+"SP008","Pedro Astenori Marigliani","Pinhalzinho-Socorro","Pinhalzinho","Socorro",10943,TRUE
+"SP023","Luiz Salomão Chama","Franco da Rocha-Mairiporã","Franco da Rocha","Mairiporã",17999,TRUE
+"SP031","Índio Tibiriça","Ribeirão Pires -São Bernardo do Campo","Ribeirão Pires","São Bernardo do Campo",19375,TRUE
+"SP046","Oswaldo Barbosa Guisardi","Santo Antonio do Pinhal-Taubaté","Santo Antonio do Pinhal","Taubaté",5954,TRUE
+"SP052","Hamilton Vieira Mendes","Cachoeira Paulista-Cruzeiro","Cachoeira Paulista","Cruzeiro",10728,TRUE
+"SP055","Doutor Manoel Hypollito Rego","Caraguatatuba-Ubatuba","Caraguatatuba","Ubatuba",21949,TRUE
+"SP055","Doutor Manoel Hypollito Rego","Caraguatatuba-São Sebastião","Caraguatatuba","São Sebastião",18093,TRUE
+"SP055","Doutor Manoel Hypollito Rego","Caraguatatuba-São Sebastião","Caraguatatuba","São Sebastião",NA,TRUE
+"SP055","Doutor Manoel Hypollito Rego","Caraguatatuba-São Sebastião","Caraguatatuba","São Sebastião",5684,TRUE
+"SP055","Doutor Manoel Hypollito Rego","Bertioga-São Sebastião","Bertioga","São Sebastião",15007,TRUE
+"SP055","Padre Manoel da Nobrega","Bertioga-São Sebastião","Bertioga","São Sebastião",25913,TRUE
+"SP055","Doutor Manoel Hypollito Rego","Bertioga-Santos","Bertioga","Santos",14353,TRUE
+"SP055","Luiz Salomão Chama","Praia Grande-São Paulo","Praia Grande","São Paulo",50248,TRUE
+"SP055","Padre Manoel da Nobrega","Itanhaem-Mongaguá","Itanhaem","Mongaguá",44949,TRUE
+"SP055","Padre Manoel da Nobrega","Itanhaem-Peruíbe","Itanhaem","Peruíbe",19383,TRUE
+"SP055","Padre Manoel da Nobrega","Pedro de Toledo-Peruibe","Pedro de Toledo","Peruibe",7771,TRUE
+"SP056","Prefeito Joaquim Simão","Igaratá-Santa Isabel","Igaratá","Santa Isabel",4552,TRUE
+"SP063","Alkindar Monteiro Junqueira","Bragança Paulista-Itatiba","Bragança Paulista","Itatiba",20123,TRUE
+"SP079","Waldomiro Correa Camargo","Itu-Sorocaba","Itu","Sorocaba",18278,TRUE
+"SP079","Waldomiro Correa Camargo","Sâo Paulo-Sorocaba","Sâo Paulo","Sorocaba",21695,TRUE
+"SP079","Raimundo Antunes Soares","Piedade-Votorantim","Piedade","Votorantim",14095,TRUE
+"SP079","Tenente Celestino Américo","Juquiá-Tapiraí","Juquiá","Tapiraí",3226,TRUE
+"SP088","Pedro Eroles","Mogi das Cruzes-São Paulo","Mogi das Cruzes","São Paulo",46262,TRUE
+"SP097","Emerenciano Prestes de Barros","Porto Feliz-Sorocaba","Porto Feliz","Sorocaba",10078,TRUE
+"SP098","Dom Paulo Rolim Loureiro","Mogi das Cruzes-São Paulo","Mogi das Cruzes","São Paulo",22267,TRUE
+"SP098","Dom Paulo Rolim Loureiro","Bertioga-Mogi das Cruzes","Bertioga","Mogi das Cruzes",11355,TRUE
+"SP103","Prof:Júlio de Paula Morâes","Caçapava-Jambeiro","Caçapava","Jambeiro",1135,TRUE
+"SP107","Prefeito Aziz Lian","Arthur Nogueira -Santo Antonio de Posse","Arthur Nogueira","Santo Antonio de Posse",14048,TRUE
+"SP121","Otácilio Fernandes da Silva","Natividade da Serra-Redenção da Serra","Natividade da Serra","Redenção da Serra",1568,TRUE
+"SP123","Floriano Rodrigues Pinheiro","Campos do Jordão-Taubaté","Campos do Jordão","Taubaté",13812,TRUE
+"SP123","Floriano Rodrigues Pinheiro","Campos do Jordão-Pindamonhangaba","Campos do Jordão","Pindamonhangaba",13085,TRUE
+"SP123","Floriano Rodrigues Pinheiro","Campos do Jordão-Pindamonhangaba","Campos do Jordão","Pindamonhangaba",10283,TRUE
+"SP125","Oswaldo Cruz","São Luis do Paraitinga-Taubaté","São Luis do Paraitinga","Taubaté",10776,TRUE
+"SP125","Oswaldo Cruz","São Luiz do Paraitinga-Taubaté","São Luiz do Paraitinga","Taubaté",7372,TRUE
+"SP125","Oswaldo Cruz","Taubaté-Ubatuba","Taubaté","Ubatuba",7272,TRUE
+"SP147","Monsenhor Clodoaldo de Paiva","Itapira-Lindoia","Itapira","Lindoia",6890,TRUE
+"SP148","Caminho do Mar","Ribeirão Pires-São Bernardo Campo","Ribeirão Pires","São Bernardo Campo",21442,TRUE
+"SP191","Geraldo de Barros","Santa Maria da Serra-São Manuel","Santa Maria da Serra","São Manuel",3528,TRUE
+"SP225","Dep.Rogê Ferreira.","Aguaí-Pirassununga","Aguaí","Pirassununga",7097,TRUE
+"SP270","Raposo Tavares","Cotia-São Paulo","Cotia","São Paulo",84900,TRUE
+"SP270","Raposo Tavares","Angatuba-Itapetininga","Angatuba","Itapetininga",11908,TRUE
+"SP270","Raposo Tavares","Itaí-Pirajú","Itaí","Pirajú",4117,TRUE
+"SP274","Rodovia Engenheiro Renê Benedito Silva","Itapevi-São Roque","Itapevi","São Roque",8700,TRUE
+"SP304","Dep.Leônidas Pachêco Ferreira","Americana-Piracicaba","Americana","Piracicaba",35978,TRUE
+"SP304","Dep.Leônidas Pachêco Ferreira","Borborema-Novo Horizonte","Borborema","Novo Horizonte",4167,TRUE
+"SP310","Feliciano Salles da Cunha","Nhandeara-São José do Rio Preto","Nhandeara","São José do Rio Preto",8641,TRUE
+"SP310","Feliciano Salles da Cunha","General Salgado-Monte Aprazível","General Salgado","Monte Aprazível",7883,TRUE
+"SP310","Feliciano Salles da Cunha","General Salgado-Monte Aprazivel","General Salgado","Monte Aprazivel",5835,TRUE
+"SP310","Feliciano Salles da Cunha","Auriflama-Nhandeara","Auriflama","Nhandeara",3430,TRUE
+"SP310","Feliciano Salles da Cunha","Auriflama-Pereira Barreto","Auriflama","Pereira Barreto",4864,TRUE
+"SP320","Euclides da Cunha","Tanabi-Votuporanga","Tanabi","Votuporanga",15970,TRUE
+"SP320","Euclides da Cunha","Fernandópolis-Votuporanga","Fernandópolis","Votuporanga",19260,TRUE
+"SP320","Euclides da Cunha","Jales-Santa Fé do Sul","Jales","Santa Fé do Sul",12154,TRUE
+"SP321","Cesário José de Castilho","Bauru-Iacanga","Bauru","Iacanga",4986,TRUE
+"SP332","Presidente Tancredo de Almeida Neves","Franco da Rocha-Jundiaí","Franco da Rocha","Jundiaí",20840,TRUE
+"SP333","Abrão Assed","Cajuru-Ribeirão Preto","Cajuru","Ribeirão Preto",6680,TRUE
+"SP354","Edgar Maximo Zambotto","Campo Limpo Paulista -Jarinu","Campo Limpo Paulista","Jarinu",18564,TRUE
+"SP360","Eng. Constâncio Cintra","Amparo-Serra Negra","Amparo","Serra Negra",7165,TRUE
+"SP360","Eng. Constâncio Cintra","Lindóia-Serra Negra","Lindóia","Serra Negra",4442,TRUE
+"SP425","Rod.Assis Chateaubriand","Barretos-Miguelópolis","Barretos","Miguelópolis",5469,TRUE
+"SP425","Rod.Assis Chateaubriand","Barretos-Olimpia","Barretos","Olimpia",6418,TRUE
+"SP425","Rod.Assis Chateaubriand","Barbosa-José Bonifâcio","Barbosa","José Bonifâcio",3380,TRUE
+"SP425","Rod.Assis Chateaubriand","Presidente Prudente-Santopólis do Aguapeí","Presidente Prudente","Santopólis do Aguapeí",6318,TRUE
+"SP425","Rod.Assis Chateaubriand","Pirapozinho-Presidente Prudente","Pirapozinho","Presidente Prudente",13700,TRUE
+"SP461","Otaviano Cardoso Filho","Birigui-Nhandeara","Birigui","Nhandeara",3783,TRUE
+"SP563","Euclides de Figueiredo","Teodoro Sampaio-Tupi Paulista","Teodoro Sampaio","Tupi Paulista",1927,TRUE
+"SP563","Euclides de Figueiredo","Andradina-Tupi Paulista","Andradina","Tupi Paulista",5126,TRUE

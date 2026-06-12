@@ -1,0 +1,179 @@
+########################################################################
+INVENTÁRIO DE FONTES DE PESO - GRAFO #2 (fluxo)
+Gerado em: 2026-06-11 19:50:52.284743 
+########################################################################
+
+[1] ARTESP - VOLUME DE PEDÁGIO
+------------------------------------------------------------------------ 
+Arquivos encontrados: 20 
+Exemplo (VOLUME_PEDAGIADO-L01-DIARIO-2024.csv) - colunas:
+DATA, LOTE, PRACA, SENTIDO, TIPO_CABINE, TIPO_PASSAGEM, TP_PAGAMENTO, LEVE-EIXOS 2, MOTO-EIXOS 2, PESADO-EIXOS 2, LEVE-EIXOS 3, PESADO-EIXOS 3, LEVE-EIXOS 4, PESADO-EIXOS 4, PESADO-EIXOS 5, PESADO-EIXOS 6, PESADO-EIXOS 7, PESADO-EIXOS 8, PESADO-EIXOS 9, PESADO-EIXOS 10, PESADO-EIXOS 11, PESADO-EIXOS 12, PESADO-EIXOS 13, PESADO-EIXOS 14, PESADO-EIXOS 15, PESADO-EIXOS 16, PESADO-EIXOS 17, PESADO-EIXOS 18, PESADO-EIXOS 19, PESADO-EIXOS 20, PESADO-EIXOS 21, PESADO-EIXOS 22, PESADO-EIXOS 23, PESADO-EIXOS 24, PESADO-EIXOS 25, PESADO-EIXOS 27, PESADO-EIXOS 28, PESADO-EIXOS 29, PESADO-EIXOS 30, PESADO-EIXOS 31, PESADO-EIXOS 32, PESADO-EIXOS 33, PESADO-EIXOS 38, PESADO-EIXOS 39, PESADO-EIXOS 40, PESADO-EIXOS 41, PESADO-EIXOS 42, PESADO-EIXOS 43, PESADO-EIXOS 44, PESADO-EIXOS 45, PESADO-EIXOS 46, PESADO-EIXOS 47, PESADO-EIXOS 48, PESADO-EIXOS 51 
+
+Total de praças distintas: 192 
+Tráfego médio diário por praça (top 10):
+                PRACA               lote veic_dia_medio
+               <char>             <char>          <num>
+ 1:           BARUERI       L12-VIAOESTE      120869.38
+ 2:            OSASCO       L12-VIAOESTE      104415.24
+ 3:   ITAQUAQUECETUBA L23-LESTE PAULISTA      101064.58
+ 4:       CAMPO LIMPO        L01-AUTOBAN       70192.38
+ 5:           CAIERAS        L01-AUTOBAN       69462.32
+ 6: REGIS BITTENCOURT       L24-RODOANEL       55896.75
+ 7:         GUARAREMA L23-LESTE PAULISTA       49403.35
+ 8:       JAGUARIÃšNA       L11-RENOVIAS       48230.09
+ 9:        INDAIATUBA        L13-COLINAS       46806.75
+10:       ITUPEVA SUL        L01-AUTOBAN       46494.20
+-> salvo: artesp_praca_diaria.csv
+
+[2] DER-SP - VDM
+------------------------------------------------------------------------ 
+Linhas (subtrechos) no Excel VDM: 68 
+Com VDM2024 preenchido: 67 
+Pares 'Trecho' que dividiram em 2 nomes limpos: 68 
+Exemplos de Trecho->par + VDM2024:
+# A tibble: 8 × 5
+  SP    Trecho                                mun_A                   mun_B                 VDM2024
+  <chr> <chr>                                 <chr>                   <chr>                   <dbl>
+1 SP008 Bragança Paulista-Pinhalzinho         Bragança Paulista       Pinhalzinho             25187
+2 SP008 Pinhalzinho-Socorro                   Pinhalzinho             Socorro                 10943
+3 SP023 Franco da Rocha-Mairiporã             Franco da Rocha         Mairiporã               17999
+4 SP031 Ribeirão Pires -São Bernardo do Campo Ribeirão Pires          São Bernardo do Campo   19375
+5 SP046 Santo Antonio do Pinhal-Taubaté       Santo Antonio do Pinhal Taubaté                  5954
+6 SP052 Cachoeira Paulista-Cruzeiro           Cachoeira Paulista      Cruzeiro                10728
+7 SP055 Caraguatatuba-Ubatuba                 Caraguatatuba           Ubatuba                 21949
+8 SP055 Caraguatatuba-São Sebastião           Caraguatatuba           São Sebastião           18093
+
+AVISO: revise 'split_ok==FALSE' (nomes com hífen como Embu-Guaçu,
+       ou trechos com 3+ termos) antes de usar como chave de par.
+-> salvo: der_vdm_pares.csv
+
+Shapefile: ATD_VDM2024.shp 
+  feições: 68 | geom: POINT | CRS: SIRGAS 2000 / Brazil Polyconic 
+  colunas: SP, Rodovia, Km, Trecho_2, Subtrecho, Km.Inicial, Km.Final_2, Administra, Data.de.in, X2020_Passe, X2020_Comer, X2020_VDM_2, X2021_Passe, X2021_Comer, X2021_DM_2, X2022_Passe, X2022_Comer, X2022_VDM_2, X2023_Passe, X2023_Comer, X2023_VDM_2, X2024_Passe, X2024_Comer, X2024_VDM_2 
+  amostra de atributos:
+     SP                  Rodovia  Km                Trecho_2  Subtrecho Km.Inicial Km.Final_2
+1 SP079 Waldomiro Correa Camargo  68      Sâo Paulo-Sorocaba 079SPE3809       67.1       70.7
+2 SP225       Dep.Rogê Ferreira.  42      Aguaí-Pirassununga 225SPE0642       39.4       44.2
+3 SP055  Padre Manoel da Nobrega 371 Pedro de Toledo-Peruibe 055SPE5997      369.9      373.6
+      Administra Data.de.in X2020_Passe X2020_Comer X2020_VDM_2 X2021_Passe X2021_Comer X2021_DM_2
+1            DER       <NA>       14487        1389       15876       17413        2298      19711
+2            DER       <NA>           -           -           -           -           -          -
+3 Concessionária 01 11 2024        5383        1522        6905        5306        1639       6945
+  X2022_Passe X2022_Comer X2022_VDM_2 X2023_Passe X2023_Comer X2023_VDM_2 X2024_Passe X2024_Comer
+1       17343        2011       19354       18262        1907       20169       19737        1958
+2           -           -           -           -           -           -        5513        1584
+3        5640        1715        7355        6053        1707        7760        6008        1763
+  X2024_VDM_2
+1       21695
+2        7097
+3        7771
+
+Shapefile: subtrechos_VDM2024.shp 
+  feições: 68 | geom: MULTILINESTRING | CRS: SIRGAS 2000 / Brazil Polyconic 
+  colunas: SP, Rodovia, Km, Trecho, Subtrecho, Km.Inicial, Km.Final, Administra, Data.de.in, X2020_Passe, X2020_Comer, X2020_VDM, X2021_Passe, X2021_Comer, X2021_DM, X2022_Passe, X2022_Comer, X2022_VDM, X2023_Passe, X2023_Comer, X2023_VDM, X2024_Passe, X2024_Comer, X2024_VDM 
+  amostra de atributos:
+     SP                      Rodovia  Km                      Trecho  Subtrecho Km.Inicial Km.Final
+1 SP055 Doutor Manoel Hypollito Rego 111 Caraguatatuba-São Sebastião 055SPE4299      102.3    112.6
+2 SP055           Luiz Salomão Chama 293      Praia Grande-São Paulo 055SPE4843      292.2    302.8
+3 SP055      Padre Manoel da Nobrega 311           Itanhaem-Mongaguá 055SPE2514      304.2    315.1
+      Administra Data.de.in X2020_Passe X2020_Comer X2020_VDM X2021_Passe X2021_Comer X2021_DM
+1            DER       <NA>           -           -         -           -           -        -
+2 Concessionária 01 11 2024       42587        3264     45851       57031        3350    60381
+3 Concessionária 01 11 2024       31253        3984     35237       32012        4081    36093
+  X2022_Passe X2022_Comer X2022_VDM X2023_Passe X2023_Comer X2023_VDM X2024_Passe X2024_Comer X2024_VDM
+1           -           -         -           -           -         -       16473        1620     18093
+2       43817        3859     47676       46633        3813     50446       46427        3821     50248
+3       32231        4109     36340       33790        4308     38098       41146        3803     44949
+
+
+[3] OD METRÔ 2023 - FLUXO DE PESSOAS
+------------------------------------------------------------------------ 
+Lendo .dbf da OD (grande, ~79MB; pode demorar)...
+Registros (viagens): 143038 | colunas: 147 
+Colunas presentes (primeiras 60):
+ZONA, MUNI_DOM, CO_DOM_X, CO_DOM_Y, ID_DOM, F_DOM, FE_DOM, DOM, CD_ENTRE, DATA, TIPO_DOM, AGUA, RUA_PAVI, NO_MORAD, TOT_FAM, ID_FAM, F_FAM, FE_FAM, FAMILIA, NO_MORAF, CONDMORA, QT_BANHO, QT_EMPRE, QT_AUTO, QT_MICRO, QT_LAVALOU, QT_GEL, QT_FREEZ, QT_MLAVA, QT_DVD, QT_MICROON, QT_MOTO, QT_SECAROU, QT_BICICLE, NAO_DCL_IT, CRITERIOBR, PONTO_BR, ANO_AUTO1, ANO_AUTO2, ANO_AUTO3, RENDA_FA, CD_RENFA, ID_PESS, F_PESS, FE_PESS, PESSOA, SIT_FAM, IDADE, SEXO, RA_A, ESTUDA, GRAU_INS, CD_ATIVI, CO_REN_I, VL_REN_I, ID_TRANSP_, ID_NAO_USO, ID_NAO_US2, ID_NAO_US3, ID_NAO_US4 
+
+Colunas-chave presentes?  MUNI_O=TRUE | MUNI_D=TRUE | FE_VIA=TRUE | MODOPRIN=TRUE 
+Códigos de município de ORIGEM distintos: 40 
+Pares O-D distintos: 506 
+Top 10 pares por viagens expandidas/dia:
+# A tibble: 10 × 3
+   MUNI_O MUNI_D viagens
+    <int>  <int>   <dbl>
+ 1     36     15 221728.
+ 2     15     36 216308.
+ 3     24     36 212942.
+ 4     36     24 212250.
+ 5     32     36 124405.
+ 6     36     32 123100.
+ 7     33     36 103915.
+ 8     36     33 100211.
+ 9     36     38  98976.
+10     38     36  94332.
+-> salvo: od_municipios_fluxo.csv
+
+Municipios_2023 (dicionário OD) - colunas: NumeroMuni, NomeMunici, CD_IBGE, Area_ha 
+  NumeroMuni     NomeMunici CD_IBGE  Area_ha
+1          1       Aruj\xe1 3503901  9633.56
+2          2        Barueri 3505708  6583.59
+3          3 Biritiba-Mirim 3506607 31812.79
+4          4       Caieiras 3509007  9637.27
+5          5        Cajamar 3509205 13163.65
+
+[4] IBGE - LIGAÇÕES RODOVIÁRIAS/HIDROVIÁRIAS 2016
+------------------------------------------------------------------------ 
+=== DIAGNÓSTICO DO ARQUIVO ===
+Existe?       TRUE 
+Tamanho (MB): 9.21  (esperado ~9.2 MB; muito menor = download truncado)
+Assinatura inicial: PK  (OK, é um zip/xlsx válido)
+
+>> SUCESSO via: readxl::read_excel (auto) 
+
+Linhas: 65638 | colunas: 23 
+Nomes das colunas:
+ID, COD_UF_A, UF_A, CODMUNDV_A, NOMEMUN_A, COD_UF_B, UF_B, CODMUNDV_B, NOMEMUN_B, VAR01, VAR02, VAR03, VAR04, VAR05, VAR06, VAR07, VAR08, VAR09, VAR10, VAR11, VAR12, VAR13, VAR14 
+
+Tipos das colunas VAR* (p/ achar frequência/tempo/custo):
+   VAR01 : character | ex: Núcleo de Metrópole (Manaus) / Centro Local / Centro de Zona A 
+   VAR02 : character | ex: Centro Local / Núcleo de Metrópole (Manaus) / Integrante de Capital Regional A (Cuiabá) 
+   VAR03 : numeric | ex: 50 / 230 / 10.5 
+   VAR04 : numeric | ex: 2160 / 8640 / 375 
+   VAR05 : numeric | ex: 7.5 / 3 / 0 
+   VAR06 : numeric | ex: 0 / 42 / 68 
+   VAR07 : numeric | ex: 7.5 / 3 / 42 
+   VAR08 : numeric | ex: -60.0233351809 / -66.9969034948 / -58.7378245486 
+   VAR09 : numeric | ex: -3.13469149092 / -1.8808448583 / -15.4461351145 
+   VAR10 : numeric | ex: -65.1553456405 / -60.0233351809 / -56.1446637405 
+   VAR11 : numeric | ex: -2.98360924257 / -3.13469149092 / -15.6580648243 
+   VAR12 : numeric | ex: 0 / 3 / 9 
+   VAR13 : character | ex: Não / Sim 
+   VAR14 : numeric | ex: 0.0231481481481481 / 0.0266203703703704 / 0.028 
+
+Amostra (pares + primeiras VARs):
+# A tibble: 6 × 10
+  UF_A  NOMEMUN_A             UF_B  NOMEMUN_B     VAR01                    VAR02 VAR03 VAR04 VAR05 VAR06
+  <chr> <chr>                 <chr> <chr>         <chr>                    <chr> <dbl> <dbl> <dbl> <dbl>
+1 AM    Manaus                AM    Uarini        Núcleo de Metrópole (Ma… Cent…  50    2160   7.5     0
+2 AM    Japurá                AM    Manaus        Centro Local             Núcl… 230    8640   3       0
+3 MT    Figueirópolis D'Oeste MT    Várzea Grande Centro Local             Inte…  10.5   375   0      42
+4 AM    Alvarães              AM    Manaus        Centro Local             Núcl…  60    1920   7.5     0
+5 AM    Alvarães              AM    Codajás       Centro Local             Cent…  50    1380   6       0
+6 AM    Autazes               AM    Borba         Centro Local             Cent…  50    1380   9       0
+
+Ligações SP-SP: 4796 
+-> salvo: ibge_ligacoes_sp.csv
+
+NOTA (dicionário IBGE confirmado): VAR03=custo(R$), VAR04=tempo(min),
+     VAR05=freq.hidroviária, VAR06=freq.rodoviária, VAR07=FREQUÊNCIA TOTAL
+     de saídas (esta é a usada como peso), VAR08-11=coordenadas, VAR14=custo/tempo.
+
+[5] SÍNTESE - COMO CADA FONTE VIRA PESO DE ARESTA (W) NO GRAFO #2
+------------------------------------------------------------------------ 
+FONTE              CHAVE DE LIGAÇÃO              ESFORÇO   COBERTURA
+DER VDM (xlsx/shp) coluna 'Trecho' = par A-B    BAIXO     rodovias DER (estado)
+IBGE Ligações     CODMUNDV_A / CODMUNDV_B        BAIXO     todo o estado (2016)
+OD Metrô          MUNI_O / MUNI_D (cód OD)       MÉDIO     RMSP (resolve Ferraz)
+ARTESP            praça -> precisa geolocalizar  ALTO      eixos concessionados
+
+Mais fáceis de plugar primeiro: DER VDM e IBGE Ligações (já são por par).
+OD entra para densificar a RMSP. ARTESP por último (exige geocodificar praças).

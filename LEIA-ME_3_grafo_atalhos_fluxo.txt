@@ -1,0 +1,128 @@
+================================================================================
+LEIA-ME  -  3_grafo_atalhos_fluxo.R
+Grafo #3 - Adjacência + Atalhos de Longa Distância (Régua Única) - SP
+================================================================================
+
+--------------------------------------------------------------------------------
+O QUE ESTE CÓDIGO FAZ (em uma frase)
+--------------------------------------------------------------------------------
+Constrói o grafo mais completo do projeto: parte da vizinhança rodoviária (base)
+e ACRESCENTA arestas entre municípios NÃO-vizinhos - atalhos de proximidade
+(cidades próximas até 150 km) e saltos de fluxo (pares com viagens reais na
+pesquisa OD). Todos os pesos são calculados numa RÉGUA ÚNICA (cada fonte
+normalizada uma só vez, globalmente), de modo que um peso 0,5 signifique a mesma
+intensidade em qualquer aresta. Gera a matriz C = D - W3 para o INLA.
+
+--------------------------------------------------------------------------------
+COMO O GRAFO #3 SE DIFERENCIA DOS ANTERIORES
+--------------------------------------------------------------------------------
+  Grafo #1  : só vizinhos por rodovia; peso = nº de vias.
+  Grafo #2  : MESMA topologia do #1; peso = fusão de 4 fontes (vias/VDM/OD/IBGE).
+  Grafo #3  : topologia AMPLIADA (base + proximidade + saltos OD); peso fundido
+              de 5 fontes (as 4 acima + proximidade), tudo na MESMA régua.
+
+Os atalhos resolvem o problema das ligações de longa distância: por exemplo,
+Ferraz de Vasconcelos passa a se conectar à capital pelo FLUXO REAL de pessoas
+(salto OD), em vez de depender de um remendo geométrico.
+
+--------------------------------------------------------------------------------
+COMO OS PESOS SÃO CALCULADOS (régua única)
+--------------------------------------------------------------------------------
+1. Monta o universo de arestas: base (vizinhança) + proximidade + saltos OD.
+   - PROXIMIDADE: para cada município, pega os K_VIZ (=8) vizinhos mais próximos
+     (kNN sobre os centroides em metros) e descarta os que ficaram além de
+     TETO_KM (=150 km). Ou seja: "8 mais próximos, depois corta acima de 150 km"
+     (não é "tudo dentro de 150 km").
+   - SALTOS OD: pares com viagens reais na pesquisa OD que NÃO são vizinhos.
+2. Anexa o valor CRU de cada fonte a cada aresta (NA onde a fonte não existe):
+   vias (só base), prox (só atalhos), e od/vdm/ibge (em qualquer aresta com o par).
+3. Normaliza CADA fonte UMA vez, sobre TODAS as arestas onde ela existe
+   (log(1+x) + z-score). Esta é a "régua única": a mesma escala para tudo.
+4. Funde por média ponderada das fontes presentes em cada aresta.
+5. Reescala o resultado para [floor_peso, 1] (positivação exigida pelo CAR).
+
+--------------------------------------------------------------------------------
+PARÂMETROS DE CONTROLE (topo do script)
+--------------------------------------------------------------------------------
+  TETO_KM     <- 150   # corte: descarta atalhos de proximidade acima disto (km)
+  K_VIZ       <- 8     # nº de vizinhos mais próximos considerados por município
+  floor_peso  <- 0.05  # piso do peso final (>0, evita aresta com peso zero)
+  pesos_fonte <- c(vias=1, vdm=1, od=1, ibge=1, prox=1)   # importância por fonte
+
+--------------------------------------------------------------------------------
+PRÉ-REQUISITOS (insumos que este script LÊ)
+--------------------------------------------------------------------------------
+NÃO lê dados brutos de tráfego; consome saídas dos scripts anteriores mais os
+shapefiles originais:
+  - W_pesos.rds            (Grafo #1, em Resultados_Grafo1/; valores CRUS de vias)
+  - der_vdm_pares.csv      (inventário, em Resultados_Inventario/)
+  - od_municipios_fluxo.csv(inventário, em Resultados_Inventario/)
+  - ibge_ligacoes_sp.csv   (inventário, em Resultados_Inventario/)
+  - SP_Municipios_2024.shp (dado original, em dados_entrada/)
+  - Municipios_2023.shp    (dicionário OD, em dados_entrada/Origem_Destinos_2023/)
+Rode o Grafo #1 (1_) e o inventário (0_) ANTES deste.
+
+--------------------------------------------------------------------------------
+ESTRUTURA DE PASTAS / CONFIGURAÇÃO
+--------------------------------------------------------------------------------
+O script se localiza sozinho. O bloco de CONFIGURAÇÃO já aponta para a estrutura
+organizada do projeto:
+
+    DIR_DADOS  <- file.path(DIR_SCRIPT, "dados_entrada")         # shapefiles originais
+    DIR_W_VIAS <- file.path(DIR_SCRIPT, "Resultados_Grafo1")     # W_pesos.rds
+    DIR_CSVS   <- file.path(DIR_SCRIPT, "Resultados_Inventario") # os 3 CSVs
+    PASTA_OD   <- "Origem_Destinos_2023"                         # dicionário OD (em dados_entrada/)
+
+Layout esperado:
+    [pasta do script]/
+    ├── 3_grafo_atalhos_fluxo.R
+    ├── LEIA-ME_3_grafo_atalhos_fluxo.txt
+    ├── dados_entrada/
+    │   ├── SP_Municipios_2024/SP_Municipios_2024.shp
+    │   └── Origem_Destinos_2023/.../Shape/Municipios_2023.shp
+    ├── Resultados_Grafo1/
+    │   └── W_pesos.rds
+    ├── Resultados_Inventario/
+    │   ├── der_vdm_pares.csv
+    │   ├── od_municipios_fluxo.csv
+    │   └── ibge_ligacoes_sp.csv
+    └── Resultados_Grafo3/         <- CRIADA pelo script (toda a saída vai aqui)
+
+Se algum insumo faltar, o script PARA listando exatamente qual.
+
+--------------------------------------------------------------------------------
+COMO RODAR
+--------------------------------------------------------------------------------
+  - RStudio: abra e clique em "Source"; ou
+  - Console: source("caminho/3_grafo_atalhos_fluxo.R"); ou
+  - Terminal: Rscript caminho/3_grafo_atalhos_fluxo.R
+Pacotes: sf, dplyr, Matrix, spdep, ggplot2.
+
+--------------------------------------------------------------------------------
+ARQUIVOS GERADOS (em Resultados_Grafo3/)
+--------------------------------------------------------------------------------
+  W_grafo3.rds                 Matriz de pesos do Grafo #3 (régua única).
+  C_grafo3.rds                 Matriz C = D - W3, para model="generic0".
+  Aconstr_grafo3.rds / econstr_grafo3.rds   Restrições soma-zero.
+  sp_grafo3.graph              Grafo binário (topologia, formato INLA).
+  grafo3_arestas.csv           Por aresta: tipo, nº de fontes, valor cru de cada
+                               fonte e peso final (para auditoria).
+  Grafo3_mapa_tipos.png        Mapa colorindo as arestas por tipo (base/prox/OD).
+  Grafo3_mapa_peso.png         Mapa com a intensidade (peso) das arestas.
+  LOG_Grafo3.txt               Relatório (cobertura, tipos, grau, resumo de peso).
+
+--------------------------------------------------------------------------------
+NOTAS / LIMITAÇÕES
+--------------------------------------------------------------------------------
+- A proximidade é distância em LINHA RETA entre centroides (EPSG 31983, métrico),
+  um PROXY de "ligado por estrada curta", não a distância rodoviária real.
+- O kNN é simetrizado (sym=TRUE): basta um dos dois municípios considerar o outro
+  entre seus 8 mais próximos para a aresta existir. O peso bruto da proximidade
+  é 1/distância (mais perto -> mais forte).
+- A régua única torna os pesos comparáveis entre TODAS as arestas - é o que
+  permite ao CAR ponderar corretamente base e atalhos na mesma escala.
+- A ordem dos nós (id_inla) vem do shapefile de municípios e é a mesma do
+  W_pesos.rds (checada com stopifnot). Não reordene os municípios.
+- AUDITORIA recomendada: no grafo3_arestas.csv, filtre tipo="salto_od" e confira
+  que os pares de maior fluxo fazem sentido geográfico (todos devem cair na RMSP).
+================================================================================

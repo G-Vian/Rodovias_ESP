@@ -1,0 +1,28 @@
+GRAFO #2 - PESOS FUNDIDOS - LOG DE EXECUÇÃO
+Gerado em: 2026-06-11 19:53:17.511817 
+
+Config: metodo_norm = zscore | floor_peso = 0.05 
+Pesos por fonte: vias=1 vdm=1 od=1 ibge=1 
+
+Arestas (topologia do Grafo #1): 1414 
+Cobertura por fonte (nº de arestas com a fonte):
+  vias : 1414 (sempre presente)
+  VDM  : 33 
+  OD   : 67 
+  IBGE : 834 
+
+Distribuição do nº de fontes por aresta:
+
+  1   2   3 
+518 858  38 
+
+Resumo do peso final:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.0500  0.3534  0.4572  0.4547  0.5690  1.0000 
+
+Componentes conexas: 1 (deve ser 1, igual ao Grafo #1)
+
+Artefatos salvos (em Resultados_Grafo2/):
+  W_fundida.rds, C_fundida.rds, Aconstr_fundida.rds, econstr_fundida.rds
+  sp_grafo2_fundido.graph, grafo2_arestas_pesos.csv
+  Grafo2_mapa_peso.png, Grafo2_mapa_fontes.png

@@ -1,0 +1,128 @@
+================================================================================
+LEIA-ME  -  1_grafo_rodoviario_sp.R
+Grafo Rodoviário Ponderado dos Municípios de São Paulo (para INLA) - "Grafo #1"
+================================================================================
+
+--------------------------------------------------------------------------------
+O QUE ESTE CÓDIGO FAZ (em uma frase)
+--------------------------------------------------------------------------------
+Ele monta um GRAFO em que cada nó é um município de SP e cada aresta liga dois
+municípios cujas divisas são cruzadas por uma mesma rodovia; o peso da aresta é
+o número de rodovias distintas que cruzam aquela divisa. A partir disso, gera a
+matriz de estrutura espacial (C = D - W) pronta para um modelo bayesiano no INLA.
+
+--------------------------------------------------------------------------------
+ESTRUTURA DE PASTAS (caminhos relativos)
+--------------------------------------------------------------------------------
+O script usa CAMINHOS RELATIVOS: ele se localiza sozinho e procura os dados na
+subpasta dados_entrada/ (ao lado do script). Organize assim:
+
+    [pasta do script]/
+    ├── 1_grafo_rodoviario_sp.R          <- o script
+    ├── LEIA-ME_1_grafo_rodoviario_sp.txt
+    ├── dados_entrada/                   <- os shapefiles ficam aqui
+    │   ├── SP_Municipios_2024/
+    │   │   └── SP_Municipios_2024.shp (+ .dbf, .shx, .prj ...)
+    │   ├── GEOFT_TRECHO_RODOVIARIO_FEDERAL/
+    │   │   └── GEOFT_TRECHO_RODOVIARIO_FEDERAL.shp (+ arquivos irmãos)
+    │   ├── Sistema Rodoviário Estadual/
+    │   │   └── MALHA_RODOVIARIA.shp (+ arquivos irmãos)
+    │   └── BC250/
+    │       └── bc_250_shapefiles_2026_03_03/
+    │           └── rod_trecho_rodoviario_l.shp (+ arquivos irmãos)
+    └── Resultados_Grafo1/               <- CRIADA pelo script (toda a saída vai aqui)
+
+IMPORTANTE: shapefile não é um arquivo só. Cada ".shp" precisa dos irmãos de
+mesmo nome (.dbf, .shx, .prj, etc.) na mesma pasta. Copie a pasta inteira.
+
+Se algum shapefile não for encontrado, o script PARA com uma mensagem dizendo
+exatamente qual caminho faltou (em vez de um erro críptico).
+
+--------------------------------------------------------------------------------
+COMO RODAR
+--------------------------------------------------------------------------------
+  - No RStudio: abra o script e clique em "Source"; ou
+  - No console R:  source("caminho/para/1_grafo_rodoviario_sp.R"); ou
+  - No terminal:   Rscript caminho/para/1_grafo_rodoviario_sp.R
+
+Em qualquer um dos casos o script descobre a própria pasta e ancora os caminhos
+nela. Não é preciso editar nenhum caminho à mão.
+
+Pacotes necessários: sf, dplyr, spdep, Matrix, ggplot2.
+(INLA só é necessário se você descomentar a PARTE 10/11.)
+
+--------------------------------------------------------------------------------
+O QUE O SCRIPT FAZ, PASSO A PASSO
+--------------------------------------------------------------------------------
+PARTE 0  Ancoragem de caminhos: descobre onde o script está e define as pastas
+         dados_entrada/ (entrada) e Resultados_Grafo1/ (saída).
+
+PARTE 1  Leitura: lê os 645 municípios de SP e três malhas de rodovias
+         (federal/DNIT, estadual/DER e BC250/IBGE), de dados_entrada/.
+
+PARTE 2  CRS e recorte: coloca tudo em SIRGAS 2000 (EPSG 4674), valida as
+         geometrias e recorta as rodovias federais e a BC250 para dentro de SP.
+
+PARTE 3  Rede viária unificada: junta as três malhas numa só camada e dá a cada
+         trecho um identificador (rid).
+
+PARTE 4  Arestas e pesos (o núcleo): corta as rodovias nos limites municipais e
+         detecta quando a MESMA via aparece em dois municípios diferentes que se
+         tocam na divisa - isso define uma aresta. O peso é quantas vias
+         distintas cruzam aquela divisa. Monta a matriz de pesos W.
+
+PARTE 5  Isolados e diagnóstico: municípios que ficaram sem nenhuma ligação
+         (grau 0) são conectados ao vizinho mais próximo (peso 1). Calcula
+         distribuição de graus, os mais conectados e sinaliza municípios da
+         Região Metropolitana com poucas conexões (efeito da escala 1:250.000).
+
+PARTE 6  Matriz de estrutura: monta C = D - W (Laplaciano ponderado) e as
+         restrições soma-zero, no formato que o INLA usa em model="generic0".
+
+PARTE 7  Exportação: salva W, C, restrições e o grafo binário.
+
+PARTE 8  Mapa do GRAFO: desenha o grafo como linhas retas entre os centros dos
+         municípios, com espessura proporcional ao peso (diagrama, não mapa
+         cartográfico).
+
+PARTE 8B Mapa das RODOVIAS: desenha o traçado REAL das vias (federal, estadual,
+         BC250) sobre o estado - útil para conferir a cobertura de cada fonte.
+
+PARTE 9  Log: grava um relatório de texto com todas as estatísticas e alertas.
+
+PARTE 10/11 (comentada) Esqueleto de como usar a matriz no INLA, com
+         verossimilhança binomial negativa e o efeito espacial generic0.
+
+--------------------------------------------------------------------------------
+ARQUIVOS GERADOS (em Resultados_Grafo1/)
+--------------------------------------------------------------------------------
+  W_pesos.rds                       Matriz de pesos W (nº de vias por par).
+  C_estrutura.rds                   Matriz C = D - W, para model="generic0".
+  Aconstr.rds / econstr.rds         Restrições soma-zero (1 por componente conexa).
+  sp_grafo_rodoviario.graph         Grafo binário (formato INLA, para referência).
+  Grafo_Rodoviario_Ponderado_SP.png Diagrama do grafo (arestas = linhas retas).
+  Mapa_Rodovias_SP.png              Mapa do traçado real das rodovias por fonte.
+  LOG_Grafo_Ponderado.txt           Relatório completo (estatísticas + alertas).
+
+--------------------------------------------------------------------------------
+NOTAS E LIMITAÇÕES
+--------------------------------------------------------------------------------
+- A BC250 é escala 1:250.000 e NÃO representa ruas urbanas. Municípios pequenos
+  e densos da Grande SP podem ficar sub-conectados (ex.: Ferraz de Vasconcelos
+  saiu isolado e foi ligado ao vizinho mais próximo). O log destaca esses casos.
+- O peso é "número de vias", uma medida de ESTRUTURA, não de volume de tráfego.
+  A PARTE 4 traz comentários de como trocar por VDM/tráfego se desejado.
+- O mapa do grafo usa linhas retas centro-a-centro (convenção de diagrama). O
+  traçado real das vias está no mapa separado (Mapa_Rodovias_SP.png).
+- A ordem dos nós (id_inla) é a ordem de leitura do shapefile de municípios e NÃO
+  deve ser alterada: o nó i da matriz corresponde à linha i de sp_municipios. Ao
+  juntar dados de casos para o INLA, faça o join por CD_MUN e ordene por id_inla.
+
+--------------------------------------------------------------------------------
+ESTE É O "GRAFO #1"
+--------------------------------------------------------------------------------
+Este script produz a base de toda a análise. Os grafos seguintes do projeto
+(2_grafo_pesos_fundidos.R = mesma topologia com pesos de tráfego/fluxo fundidos;
+3_grafo_atalhos_fluxo.R = com atalhos de longa distância) REUTILIZAM o arquivo
+W_pesos.rds gerado aqui. Logo, rode este script (e o inventário) PRIMEIRO.
+================================================================================

@@ -1,0 +1,82 @@
+================================================================================
+LEIA-ME GERAL  -  Pipeline de Construção dos Grafos Espaciais (SP / INLA)
+================================================================================
+Este documento explica os QUATRO scripts da pasta, o que cada um faz, a ordem
+em que devem rodar,
+
+================================================================================
+O QUE CADA SCRIPT FAZ
+================================================================================
+
+--------------------------------------------------------------------------------
+0_inventario_fontes_peso.R
+--------------------------------------------------------------------------------
+NÃO é um grafo. É o reconhecimento das fontes de fluxo/tráfego: lê cada fonte
+bruta, descreve sua estrutura e a converte em tabela por PAR de municípios.
+  LÊ      : ARTESP (pedágios), VDM/DER, OD/Metrô (.dbf) e IBGE Ligações, de dados_entrada/
+  GERA    : der_vdm_pares.csv, od_municipios_fluxo.csv, ibge_ligacoes_sp.csv
+            (USADOS pelos Grafos #2 e #3) + artesp_praca_diaria.csv + log
+            -> Resultados_Inventario/
+  PAPEL   : pré-processamento; transforma dados brutos em insumos por par.
+
+
+--------------------------------------------------------------------------------
+1_grafo_rodoviario_sp.R
+--------------------------------------------------------------------------------
+Monta o grafo base: nós = municípios de SP; existe aresta quando uma rodovia
+cruza a divisa entre dois municípios vizinhos; o peso é o NÚMERO DE VIAS que
+cruzam aquela divisa. Trata nós isolados (liga ao vizinho mais próximo) e produz
+a matriz C = D - W para o INLA.
+  LÊ      : shapefiles (municípios + malhas federal/estadual/BC250), de dados_entrada/
+  GERA    : W_pesos.rds (USADO pelos Grafos #2 e #3), C_estrutura.rds, restrições,
+            o grafo binário, mapas e log -> Resultados_Grafo1/
+  PERGUNTA: "as cidades estão ligadas por estrada?"
+
+
+--------------------------------------------------------------------------------
+ 2_grafo_pesos_fundidos.R
+--------------------------------------------------------------------------------
+Mantém EXATAMENTE a topologia do Grafo #1 (só vizinhos), mas troca o peso "nº de
+vias" por uma FUSÃO de 4 fontes: vias + VDM + OD + IBGE (cada uma normalizada por
+log1p+z-score; combinação por média ponderada das fontes presentes).
+  LÊ      : W_pesos.rds (de Resultados_Grafo1/) + os 3 CSVs (de Resultados_Inventario/)
+            + shapefile de municípios e dicionário OD (de dados_entrada/)
+  GERA    : W_fundida.rds, C_fundida.rds, restrições, grafo binário, 2 mapas,
+            grafo2_arestas_pesos.csv, log -> Resultados_Grafo2/
+  PERGUNTA: "as cidades vizinhas estão ligadas, e com que INTENSIDADE de tráfego?"
+
+--------------------------------------------------------------------------------
+3_grafo_atalhos_fluxo.R
+--------------------------------------------------------------------------------
+O grafo mais completo: AMPLIA a topologia além da vizinhança, somando atalhos de
+proximidade (cidades próximas até 150 km, via kNN) e saltos de OD (pares com
+fluxo real de pessoas, mesmo distantes). TODAS as fontes são normalizadas numa
+RÉGUA ÚNICA (global), tornando os pesos comparáveis entre quaisquer arestas.
+  LÊ      : os MESMOS insumos do Grafo #2 (W_pesos.rds + 3 CSVs + shapefiles)
+  GERA    : W_grafo3.rds, C_grafo3.rds, restrições, grafo binário, 2 mapas,
+            grafo3_arestas.csv, log -> Resultados_Grafo3/
+  PERGUNTA: "as cidades estão acopladas pelo FLUXO REAL e pela proximidade, mesmo
+            sem fazer divisa?"
+
+================================================================================
+ESTRUTURA DE PASTAS (comum a todos)
+================================================================================
+    [pasta dos scripts]/
+    │
+    ├── 0_inventario_fontes_peso.R   (lê as fontes brutas; gera os 3 CSVs)
+    ├── 1_grafo_rodoviario_sp.R      (Grafo #1: vizinhança + nº de vias)
+    ├── 2_grafo_pesos_fundidos.R     (Grafo #2: mesma topologia, 4 fontes)
+    ├── 3_grafo_atalhos_fluxo.R      (Grafo #3: + atalhos, régua única)
+    │
+    ├── dados_entrada/               (shapefiles e fontes brutas de entrada)
+    │
+    ├── Resultados_Inventario/       (saída de 0_: der_vdm_pares.csv,
+    │                                 od_municipios_fluxo.csv, ibge_ligacoes_sp.csv)
+    ├── Resultados_Grafo1/           (saída de 1_: W_pesos.rds, C_estrutura.rds,
+    │                                 restrições, .graph, mapas, log)
+    ├── Resultados_Grafo2/           (saída de 2_: W_fundida.rds, C_fundida.rds, ...)
+    └── Resultados_Grafo3/           (saída de 3_: W_grafo3.rds, C_grafo3.rds, ...)
+
+ORDEM DE EXECUÇÃO:
+    0_ e 1_  são irmãos (qualquer ordem entre si) -> depois 2_ -> depois 3_
+    (2_ e 3_ precisam do W_pesos.rds de 1_ E dos 3 CSVs de 0_)

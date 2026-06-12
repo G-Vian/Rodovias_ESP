@@ -1,0 +1,119 @@
+########################################################################
+RELATÓRIO - GRAFO RODOVIÁRIO PONDERADO DE MUNICÍPIOS (SP)
+Projeto: Epidemiologia Matemática / INLA
+Gerado em: 2026-06-11 11:46:47.966928 
+########################################################################
+
+[1] DEFINIÇÃO DO GRAFO
+------------------------------------------------------------------------ 
+- Nó    : município ( 645 no total; ordem = id_inla = linha de sp_municipios).
+- Aresta: existe rodovia (federal/estadual/BC250) cruzando a divisa A-B.
+- Peso  : nº de rodovias DISTINTAS que cruzam a divisa do par.
+- CRS de trabalho (topologia): EPSG 4674 (SIRGAS2000 geográfico).
+- Saída p/ modelo: C = D - W (Laplaciano ponderado), p/ model='generic0'.
+
+[2] INSUMOS VIÁRIOS (após recorte para SP)
+------------------------------------------------------------------------ 
+- Trechos federais (DNIT) : 415 
+- Trechos estaduais (DER) : 4583 
+- Trechos BC250 (IBGE)    : 12386 
+- Total de trechos (rid)  : 17384 
+- Pedaços após recorte municipal: 22622 
+
+[3] ESTATÍSTICAS DAS ARESTAS E PESOS
+------------------------------------------------------------------------ 
+- Pares de municípios conectados : 1412 
+- Peso médio (vias por par)      : 3.72 
+- Peso mediano                   : 3 
+- Peso máximo                    : 22 
+- Peso mínimo                    : 1 
+- Desvio-padrão do peso          : 2.64 
+- Distribuição do peso (quantis):
+  0%  25%  50%  75%  90%  95% 100% 
+   1    2    3    5    7    8   22 
+
+[4] CONECTIVIDADE DOS NÓS (após correções)
+------------------------------------------------------------------------ 
+- Distribuição do GRAU (nº de vizinhos):
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  1.000   3.000   4.000   4.384   5.000  15.000 
+- Distribuição da FORÇA (soma de pesos):
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    1.0    10.0    15.0    16.3    21.0    66.0 
+
+Top 10 municípios mais conectados (por grau):
+                     mun grau
+               São Paulo   15
+ Santa Cruz do Rio Pardo   10
+              Piracicaba   10
+            Itapetininga   10
+                Campinas   10
+            Taquaritinga    9
+     Presidente Prudente    9
+         Monte Aprazível    9
+                  Agudos    9
+                 Itapeva    9
+
+Top 10 municípios mais conectados (por força = soma de pesos):
+                 mun forca
+           São Paulo    66
+            Campinas    57
+             Itapeva    54
+        Itapetininga    54
+            Sorocaba    48
+     Monte Aprazível    46
+ Presidente Prudente    43
+        Capão Bonito    41
+                 Itu    41
+          Piracicaba    40
+
+[5] ALERTA: SUB-CONEXÃO EM ÁREA URBANA (escala da BC250)
+------------------------------------------------------------------------ 
+A BC250 é escala 1:250.000 e NAO representa malha de ruas urbanas. Em áreas
+densamente urbanizadas (RMSP), vias de passagem podem ter sido atribuídas aos
+vizinhos e nenhuma rodovia federal/estadual cruza a divisa de municípios
+pequenos. Resultado: municípios urbanos pequenos podem ficar SUB-CONECTADOS
+(ou até isolados) no grafo, justamente onde a conectividade real é mais densa.
+
+Exemplo observado: Ferraz de Vasconcelos (município urbano da Grande SP,
+cercado de vizinhos) saiu como grau 0 no grafo puramente rodoviário.
+
+- Municípios com grau <= 2: 73 
+  Lista:
+   Nova Canaã Paulista, Aramina, Guarujá, Itariri, Itaju, Ferraz de Vasconcelos, Itapuí, Paulicéia, Caconde, Presidente Epitácio, Arandu, Arapeí, Itapura, Rubiácea, Bananal, São Caetano do Sul, Areiópolis, Itapirapuã Paulista, Águas de São Pedro, Barra do Turvo, Guaiçara, Santa Cruz da Esperança, Estiva Gerbi, Hortolândia, Rio Grande da Serra, Iepê, Queluz, Oscar Bressane, Diadema, Oriente, Colômbia, Canas, Piquete, Mongaguá, Carapicuíba, Rosana, Boracéia, Balbinos, São Bento do Sapucaí, São Sebastião, Ubarana, Itirapuã, Mesópolis, Águas da Prata, Poloni, Roseira, Santa Lúcia, Ubatuba, Euclides da Cunha Paulista, Itanhaém, Sales, São José do Barreiro, Itaoca, Nantes, Águas de Lindóia, Taboão da Serra, Ilhabela, Timburi, Ilha Comprida, Torre de Pedra, Adolfo, Barão de Antonina, Vargem Grande Paulista, Praia Grande, Rifaina, Ribeirão Grande, Várzea Paulista, Pedrinhas Paulista, Canitar, Sabino, Santo Antônio do Jardim, Jandira, Peruíbe 
+- DESTES, pertencentes à RMSP (alerta forte): 8 
+   Ferraz de Vasconcelos, São Caetano do Sul, Rio Grande da Serra, Diadema, Carapicuíba, Taboão da Serra, Vargem Grande Paulista, Jandira 
+
+  >> Se há muitos nomes da Grande SP acima, o grafo rodoviário está
+     subestimando a conectividade metropolitana. Considere um grafo
+     HÍBRIDO (rodoviário ponderado + contiguidade poly2nb onde faltar).
+
+[6] NÓS ISOLADOS E ARESTAS ARTIFICIAIS
+------------------------------------------------------------------------ 
+- Componentes conexas ANTES da correção: 3 
+- Nós isolados (grau 0) ANTES da correção: 2 
+   Ferraz de Vasconcelos, Ilhabela 
+- Arestas artificiais criadas (ligação ao vizinho mais próximo, peso 1):
+    * Ferraz de Vasconcelos -> Poá 
+    * Ilhabela -> Caraguatatuba 
+
+  NOTA: a aresta de Ilhabela foi criada por proximidade de centroide.
+  Se quiser fidelidade à balsa real (Ilhabela <-> São Sebastião), force-a
+  manualmente em W antes de montar C.
+- Componentes conexas APÓS a correção: 1 
+
+[7] ARTEFATOS GERADOS (em Resultados_Grafo1/)
+------------------------------------------------------------------------ 
+- sp_grafo_rodoviario.graph  (grafo binário, referência/diagnóstico)
+- W_pesos.rds                (matriz de pesos simétrica)
+- C_estrutura.rds            (C = D - W, para model='generic0')
+- Aconstr.rds / econstr.rds  (restrições soma-zero, 1 por componente)
+- Grafo_Rodoviario_Ponderado_SP.png (diagrama do grafo)
+- Mapa_Rodovias_SP.png       (traçado real das rodovias por fonte)
+
+[8] PRÓXIMO PASSO (INLA)
+------------------------------------------------------------------------ 
+Caminho A: f(id_inla, model='generic0', Cmatrix=C_scaled,
+            constr=FALSE, extraconstr=list(A=Aconstr,e=econstr),
+            rankdef=1)
+Verossimilhança: family='nbinomial'. 'dados' deve estar ordenado por id_inla.

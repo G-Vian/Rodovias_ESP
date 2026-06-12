@@ -1,0 +1,104 @@
+================================================================================
+LEIA-ME  -  2_grafo_pesos_fundidos.R
+Grafo Rodoviário com Pesos Fundidos de 4 Fontes (SP) - "Grafo #2"
+================================================================================
+
+--------------------------------------------------------------------------------
+O QUE ESTE CÓDIGO FAZ (em uma frase)
+--------------------------------------------------------------------------------
+Mantém EXATAMENTE a topologia do Grafo #1 (arestas = municípios vizinhos ligados
+por rodovia) e substitui o peso "nº de vias" por um peso que FUNDE quatro fontes
+de intensidade de ligação: nº de vias, VDM (veículos/DER), OD (pessoas/Metrô) e
+IBGE (VAR07, frequência de transporte). Gera a matriz C = D - W para o INLA.
+
+--------------------------------------------------------------------------------
+COMO OS PESOS SÃO CALCULADOS (resumo)
+--------------------------------------------------------------------------------
+1. Cada fonte é anexada às arestas pela chave (par de códigos IBGE dos municípios).
+2. Cada fonte é normalizada: log(1+x) seguido de z-score (configurável p/ "rank").
+3. O peso de cada aresta é a MÉDIA PONDERADA das fontes PRESENTES nela (fontes
+   ausentes são ignoradas, não viram zero). Pesos relativos em 'pesos_fonte'.
+4. Positivação: o resultado é reescalado para [0,05; 1] (o CAR exige peso >= 0;
+   o piso 0,05 evita peso zero, que isolaria nós).
+
+--------------------------------------------------------------------------------
+PRÉ-REQUISITOS (insumos que este script LÊ)
+--------------------------------------------------------------------------------
+Este script NÃO lê dados brutos; ele consome saídas de outros dois scripts mais
+os shapefiles originais:
+  - W_pesos.rds            (gerado pelo Grafo #1, em Resultados_Grafo1/)
+  - der_vdm_pares.csv      (gerado pelo inventário, em Resultados_Inventario/)
+  - od_municipios_fluxo.csv(gerado pelo inventário, em Resultados_Inventario/)
+  - ibge_ligacoes_sp.csv   (gerado pelo inventário, em Resultados_Inventario/)
+  - SP_Municipios_2024.shp (dado original, em dados_entrada/)
+  - Municipios_2023.shp    (dicionário OD, em dados_entrada/Origem_Destinos_2023/)
+Rode o Grafo #1 (1_) e o inventário (0_) ANTES deste.
+
+--------------------------------------------------------------------------------
+ESTRUTURA DE PASTAS / CONFIGURAÇÃO
+--------------------------------------------------------------------------------
+O script se localiza sozinho. Cada insumo mora numa pasta diferente; o bloco de
+CONFIGURAÇÃO no topo já aponta para a estrutura organizada do projeto:
+
+    DIR_DADOS  <- file.path(DIR_SCRIPT, "dados_entrada")         # shapefiles originais
+    DIR_W_VIAS <- file.path(DIR_SCRIPT, "Resultados_Grafo1")     # W_pesos.rds
+    DIR_CSVS   <- file.path(DIR_SCRIPT, "Resultados_Inventario") # os 3 CSVs
+    PASTA_OD   <- "Origem_Destinos_2023"                         # dicionário OD (em dados_entrada/)
+
+Layout esperado:
+    [pasta do script]/
+    ├── 2_grafo_pesos_fundidos.R
+    ├── LEIA-ME_2_grafo_pesos_fundidos.txt
+    ├── dados_entrada/
+    │   ├── SP_Municipios_2024/SP_Municipios_2024.shp
+    │   └── Origem_Destinos_2023/.../Shape/Municipios_2023.shp
+    ├── Resultados_Grafo1/
+    │   └── W_pesos.rds
+    ├── Resultados_Inventario/
+    │   ├── der_vdm_pares.csv
+    │   ├── od_municipios_fluxo.csv
+    │   └── ibge_ligacoes_sp.csv
+    └── Resultados_Grafo2/         <- CRIADA pelo script (toda a saída vai aqui)
+
+Se algum insumo faltar, o script PARA listando exatamente qual e dizendo para
+ajustar DIR_DADOS / DIR_W_VIAS / DIR_CSVS.
+
+--------------------------------------------------------------------------------
+PARÂMETROS DE CONTROLE (topo do script)
+--------------------------------------------------------------------------------
+  pesos_fonte <- c(vias=1, vdm=1, od=1, ibge=1)  # importância de cada fonte
+  metodo_norm <- "zscore"                         # ou "rank"
+  floor_peso  <- 0.05                             # piso do peso final
+
+--------------------------------------------------------------------------------
+COMO RODAR
+--------------------------------------------------------------------------------
+  - RStudio: abra e clique em "Source"; ou
+  - Console: source("caminho/2_grafo_pesos_fundidos.R"); ou
+  - Terminal: Rscript caminho/2_grafo_pesos_fundidos.R
+Pacotes: sf, dplyr, Matrix, spdep, ggplot2.
+
+--------------------------------------------------------------------------------
+ARQUIVOS GERADOS (em Resultados_Grafo2/)
+--------------------------------------------------------------------------------
+  W_fundida.rds                Matriz de pesos fundidos (simétrica).
+  C_fundida.rds                Matriz C = D - W, para model="generic0".
+  Aconstr_fundida.rds / econstr_fundida.rds   Restrições soma-zero.
+  sp_grafo2_fundido.graph      Grafo binário (topologia, formato INLA).
+  grafo2_arestas_pesos.csv     Por aresta: valor cru e normalizado de cada fonte,
+                               nº de fontes e peso final (para auditoria).
+  Grafo2_mapa_peso.png         Mapa com a intensidade (peso fundido) das arestas.
+  Grafo2_mapa_fontes.png       Mapa colorindo as arestas pelo nº de fontes.
+  LOG_Grafo2_Fusao.txt         Relatório (cobertura por fonte, resumo de peso...).
+
+--------------------------------------------------------------------------------
+NOTAS / LIMITAÇÕES
+--------------------------------------------------------------------------------
+- A topologia é a do Grafo #1: só municípios VIZINHOS. VDM e OD (fluxo de longa
+  distância) tocam poucas arestas aqui; o grafo tende a ser dominado por
+  vias+IBGE. Para incluir fluxo de longa distância, use o Grafo #3.
+- A ordem dos nós (id_inla) vem do shapefile de municípios e deve ser a mesma do
+  W_pesos.rds (o script checa com stopifnot). Não reordene os municípios.
+- O join do VDM é por NOME (normalizado): nomes com hífen ou erro de digitação
+  podem não casar; o log lista os não-casados.
+================================================================================

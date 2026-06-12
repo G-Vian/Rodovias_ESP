@@ -1,0 +1,41 @@
+GRAFO #3 (RÉGUA ÚNICA) - LOG DE EXECUÇÃO
+Gerado em: 2026-06-11 19:59:11.458737 
+
+Config: TETO_KM= 150 | K_VIZ= 8 | floor_peso= 0.05 
+Pesos por fonte: vias=1 vdm=1 od=1 ibge=1 prox=1 
+
+NORMALIZAÇÃO: régua ÚNICA - cada fonte (vias, vdm, od, ibge, prox) é
+  log1p+z-score sobre TODAS as arestas onde existe; fusão = média ponderada
+  das fontes presentes; positivação única -> [ 0.05 , 1].
+
+Arestas base (vizinhança)     : 1414 
+Atalhos de proximidade (novos): 1646 
+Saltos de OD (novos)          : 193 
+TOTAL de arestas              : 3188 
+
+Distribuição por tipo:
+
+                base          proximidade proximidade+salto_od             salto_od 
+                1414                 1581                   65                  128 
+
+Cobertura por fonte (nº de arestas com a fonte):
+  vias : 1414
+  vdm  : 39
+  od   : 260
+  ibge : 1295
+  prox : 1646
+
+Distribuição do nº de fontes por aresta:
+
+   1    2    3 
+1767 1376   45 
+
+Grau por município:
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  8.000   8.000   9.000   9.885  10.000  38.000 
+
+Resumo do peso (régua única):
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.0500  0.2058  0.2572  0.2607  0.3124  1.0000 
+
+Componentes conexas: 1 

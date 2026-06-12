@@ -1,0 +1,112 @@
+================================================================================
+LEIA-ME  -  0_inventario_fontes_peso.R
+Inventário das Fontes de Peso para os Grafos de Fluxo (SP)
+================================================================================
+
+--------------------------------------------------------------------------------
+O QUE ESTE CÓDIGO FAZ (em uma frase)
+--------------------------------------------------------------------------------
+Ele LÊ e DESCREVE as quatro fontes de dados de fluxo/tráfego (ARTESP, VDM, OD do
+Metrô e Ligações do IBGE), sem construir grafo nenhum, e gera tabelas-resumo
+(CSVs) por PAR de municípios que os scripts dos Grafos #2 e #3 depois consomem.
+É o passo de "reconhecimento de terreno" antes de ponderar os grafos.
+
+--------------------------------------------------------------------------------
+ONDE ESTE SCRIPT SE ENCAIXA NA ORDEM DO PROJETO
+--------------------------------------------------------------------------------
+  0_inventario_fontes_peso.R (ESTE)     -> gera os CSVs de fluxo
+  1_grafo_rodoviario_sp.R    (Grafo #1) -> gera W_pesos.rds
+     (os dois acima são IRMÃOS: podem rodar em qualquer ordem entre si)
+  2_grafo_pesos_fundidos.R   (Grafo #2) -> precisa dos CSVs E do W_pesos.rds
+  3_grafo_atalhos_fluxo.R    (Grafo #3) -> idem (atalhos de longa distância)
+
+--------------------------------------------------------------------------------
+ESTRUTURA DE PASTAS (caminhos relativos)
+--------------------------------------------------------------------------------
+O script se localiza sozinho. As fontes brutas ficam dentro de dados_entrada/
+(ao lado do script). A saída vai para Resultados_Inventario/.
+
+    [pasta do script]/
+    ├── 0_inventario_fontes_peso.R
+    ├── LEIA-ME_0_inventario_fontes_peso.txt
+    ├── dados_entrada/
+    │   ├── ARTESP (Dados de Tráfego de Concessionárias  Pedágios)/
+    │   │   └── volume_trafego_diario_2024/   (os 20 CSV VOLUME_PEDAGIADO-*.csv)
+    │   ├── DER-SP (Volume Diário Médio - VDM)/
+    │   │   ├── VDM_2024.xlsx
+    │   │   └── Shapefiles - VDM 2024/        (subtrechos_VDM2024.shp, ATD_VDM2024.shp)
+    │   ├── Origem_Destinos_2023/
+    │   │   └── Site_190225_PesquisaOD2023/Site_190225/
+    │   │       ├── Banco2023_divulgacao_190225.dbf
+    │   │       └── 002_Site Metro Mapas_190225/Shape/Municipios_2023.shp
+    │   └── Ligações Rodoviárias e Hidroviárias - Frequência de transporte público/
+    │       └── Base_de_dados_ligacoes_rodoviarias_e_hidroviarias_2016.xlsx
+    └── Resultados_Inventario/            <- CRIADA pelo script (saída vai aqui)
+
+Os NOMES dessas pastas estão definidos no topo do script (PASTA_ARTESP, PASTA_VDM,
+PASTA_OD, PASTA_IBGE), e o script as procura dentro de dados_entrada/ por meio da
+variável DIR_DADOS. Se você renomear alguma, ajuste lá — é só uma linha cada.
+ATENÇÃO: o nome da pasta ARTESP tem DOIS espaços entre "Concessionárias" e
+"Pedágios" (herança do nome original); mantenha igual ou corrija nos dois lugares.
+
+--------------------------------------------------------------------------------
+COMO RODAR
+--------------------------------------------------------------------------------
+  - RStudio: abra e clique em "Source"; ou
+  - Console: source("caminho/0_inventario_fontes_peso.R"); ou
+  - Terminal: Rscript caminho/0_inventario_fontes_peso.R
+
+Pacotes: sf, dplyr, readxl, data.table, stringr, foreign (p/ o .dbf da OD) e,
+opcionalmente, openxlsx (uma das tentativas de leitura do Excel do IBGE).
+
+--------------------------------------------------------------------------------
+O QUE O SCRIPT FAZ, PASSO A PASSO
+--------------------------------------------------------------------------------
+PARTE 0  Ancoragem de caminhos relativos: define DIR_DADOS (dados_entrada/) e
+         cria Resultados_Inventario/.
+
+PARTE 1  ARTESP (pedágios): lê os 20 CSV de volume diário, soma todas as colunas
+         de veículo por linha e calcula o tráfego médio diário POR PRAÇA. Salva
+         artesp_praca_diaria.csv. (Dado é por praça, sem chave de município.)
+
+PARTE 2  DER VDM: (a) lê o Excel, quebra a coluna 'Trecho' ("MunicípioA-MunicípioB")
+         em par de municípios e salva der_vdm_pares.csv; (b) inventaria os
+         shapefiles do VDM (geometria, CRS, colunas).
+
+PARTE 3  OD Metrô: lê o .dbf (~79 MB) das viagens, agrega o fluxo de pessoas por
+         par (MUNI_O, MUNI_D) somando o fator de expansão FE_VIA, e salva
+         od_municipios_fluxo.csv. Também lê o dicionário Municipios_2023.shp
+         (NumeroMuni -> CD_IBGE) que traduz os códigos OD para código IBGE.
+
+PARTE 4  IBGE Ligações 2016: leitura ROBUSTA do Excel (diagnostica o arquivo e
+         tenta vários engines em cascata, contornando lock do OneDrive). Mostra
+         os tipos das colunas VAR* e salva o recorte SP-SP em ibge_ligacoes_sp.csv.
+         Dicionário confirmado: VAR07 = frequência total de saídas (o peso usado).
+
+PARTE 5  Síntese: tabela de como cada fonte vira peso de aresta e o esforço de cada.
+
+Tudo o que é impresso também vai para LOG_Inventario_Pesos.txt (sink split=TRUE).
+
+--------------------------------------------------------------------------------
+ARQUIVOS GERADOS (em Resultados_Inventario/)
+--------------------------------------------------------------------------------
+  LOG_Inventario_Pesos.txt    Relatório completo (console + arquivo).
+  artesp_praca_diaria.csv     Tráfego médio diário por praça de pedágio.
+  der_vdm_pares.csv           Pares de municípios + VDM 2024 (do Excel DER).
+  od_municipios_fluxo.csv     Viagens expandidas entre municípios (OD Metrô).
+  ibge_ligacoes_sp.csv        Ligações de transporte entre municípios de SP.
+
+IMPORTANTE p/ os próximos scripts: os Grafos #2 e #3 LEEM três destes CSVs
+(der_vdm_pares, od_municipios_fluxo, ibge_ligacoes_sp) diretamente de
+Resultados_Inventario/ — não é preciso copiá-los para outro lugar.
+
+--------------------------------------------------------------------------------
+NOTAS
+--------------------------------------------------------------------------------
+- ARTESP: dado por praça, sem chave de município -> exigiria geocodificar 192
+  praças para virar peso de aresta; por isso ficou de fora do grafo (por ora).
+- VDM: cobertura pequena (~68 trechos), porém volume veicular real e por par.
+- OD: cobre só a Região Metropolitana; é o fluxo de pessoas que conecta o Ferraz.
+- IBGE: cobre o estado todo (~4.800 pares SP-SP); VAR07 é a frequência de saídas.
+- O .dbf da OD é grande (~79 MB): a Parte 3 pode levar um tempo para ler.
+================================================================================
