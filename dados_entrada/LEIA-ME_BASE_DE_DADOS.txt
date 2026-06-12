@@ -1,0 +1,129 @@
+================================================================================
+LEIA-ME  -  BASE DE DADOS (dados_entrada/)
+Fontes, conteúdo e uso de cada pasta - Projeto Grafos Espaciais SP / INLA
+================================================================================
+Este documento cataloga as pastas de dados brutos do projeto: o que cada uma
+contém, de onde veio (fonte oficial + link) e em quais scripts é usada. Todas
+estas pastas ficam dentro de dados_entrada/.
+
+Legenda de uso:
+  [NÓS]   define os municípios (nós do grafo)
+  [VIAS]  define a topologia/arestas rodoviárias (Grafo #1)
+  [PESO]  vira peso de aresta (fluxo de veículos ou de pessoas)
+  [DIC]   dicionário/tradução de códigos
+  [n/u]   presente na base, mas NÃO usado pelos scripts atuais
+
+================================================================================
+1. TOPOLOGIA DOS MUNICÍPIOS (NÓS DO GRAFO)
+================================================================================
+PASTA : SP_Municipios_2024/                                              [NÓS]
+FONTE : IBGE - Malhas Territoriais (Municípios 2024)
+ARQUIVO: SP_Municipios_2024.shp (645 polígonos municipais)
+USO   : Define os nós do grafo e os centroides (para distâncias e mapas).
+        Lido por TODOS os scripts. A ordem de leitura define id_inla (o nó i
+        da matriz = linha i deste shapefile) e NÃO deve ser alterada.
+CHAVE : CD_MUN (código IBGE, 7 dígitos), NM_MUN (nome).
+
+================================================================================
+2. MALHAS RODOVIÁRIAS (TOPOLOGIA / ARESTAS DO GRAFO #1)
+================================================================================
+PASTA : Sistema Rodoviário Estadual/                                     [VIAS]
+FONTE : DER-SP - Sistema Rodoviário Estadual
+LINK  : https://www.der.sp.gov.br/WebSite/Servicos/ConjuntoDados.aspx?tema=Sistema_Rodoviario_Estadual&conjunto=
+ARQUIVO: MALHA_RODOVIARIA.shp (linhas das rodovias estaduais e concessionárias)
+USO   : Uma das três malhas que formam a rede viária do Grafo #1.
+        >> Esta é a malha estadual USADA pelos scripts.
+
+PASTA : GEOFT_TRECHO_RODOVIARIO_ESTADUAL/                                [n/u]
+FONTE : malha estadual (formato GEOFT) - fonte alternativa
+USO   : NÃO usada pelos scripts atuais (a malha estadual vem da pasta acima).
+        Mantida na base como alternativa/checagem. Se quiser usá-la no lugar,
+        ajuste path_est em 1_grafo_rodoviario_sp.R.
+
+PASTA : GEOFT_TRECHO_RODOVIARIO_FEDERAL/                                 [VIAS]
+FONTE : DNIT / GeoDNIT - Sistema Nacional de Viação (SNV)
+LINK  : https://metadados.snirh.gov.br/geonetwork/srv/api/records/ff37f924-e88d-4ee4-82e7-14a3e5efe0fd
+ARQUIVO: GEOFT_TRECHO_RODOVIARIO_FEDERAL.shp (rodovias federais)
+USO   : Malha FEDERAL do Grafo #1 (recortada para SP dentro do script).
+
+PASTA : BC250/                                                           [VIAS]
+FONTE : IBGE - Base Cartográfica Contínua do Brasil 1:250.000 (BC250)
+LINK  : https://www.ibge.gov.br/geociencias/cartas-e-mapas/bases-cartograficas-continuas/15759-brasil.html
+ARQUIVO: bc_250_shapefiles_2026_03_03/rod_trecho_rodoviario_l.shp
+USO   : Terceira malha do Grafo #1. Cobre vias que não aparecem na malha
+        estadual nem na federal. ATENÇÃO: escala 1:250.000 NÃO representa ruas
+        urbanas - por isso municípios urbanos pequenos (ex.: Ferraz de
+        Vasconcelos) podem ficar sub-conectados no grafo rodoviário puro.
+
+================================================================================
+3. FLUXO DE VEÍCULOS (PESOS LOGÍSTICOS)
+================================================================================
+PASTA : DER-SP (Volume Diário Médio - VDM)/                              [PESO]
+FONTE : DER-SP - Volume Diário Médio das Rodovias (VDM)
+LINK  : https://www.der.sp.gov.br/WebSite/Servicos/ConjuntoDados.aspx?tema=Volume_Diario_Medio_Das_Rodovias_VDM&conjunto=
+ARQUIVOS: VDM_2024.xlsx (coluna 'Trecho' = "MunicípioA-MunicípioB" + VDM por ano)
+          Shapefiles - VDM 2024/ (mesma info com geometria)
+USO   : Peso de aresta = volume diário médio de veículos. Cobertura PEQUENA
+          (~68 trechos), mas é medição de tráfego real por par de municípios.
+          Processado pelo inventário -> der_vdm_pares.csv.
+
+PASTA : ARTESP (Dados de Tráfego de Concessionárias  Pedágios)/          [n/u]
+FONTE : ARTESP - Volume de Tráfego (dados abertos)
+LINK  : https://dadosabertos.artesp.sp.gov.br/dataset/volume-de-trafego
+ARQUIVOS: volume_trafego_diario_2024/ (20 CSV VOLUME_PEDAGIADO-*.csv)
+USO   : Tráfego por PRAÇA de pedágio. O inventário calcula o volume médio
+          diário por praça (artesp_praca_diaria.csv), MAS o dado NÃO entra no
+          grafo: é por praça, sem chave de município. Viraria peso só após
+          geocodificar as ~192 praças e atribuí-las a divisas municipais.
+        >> Nota: o nome da pasta tem DOIS espaços entre "Concessionárias" e
+           "Pedágios" (é assim que os scripts a procuram).
+
+================================================================================
+4. FLUXO DE PESSOAS (PESOS DEMOGRÁFICOS)
+================================================================================
+PASTA : Ligações Rodoviárias e Hidroviárias - Frequência de transporte público/  [PESO]
+FONTE : IBGE - Ligações Rodoviárias e Hidroviárias (Redes e Fluxos, 2016)
+LINK  : https://www.ibge.gov.br/geociencias/organizacao-do-territorio/redes-e-fluxos-geograficos/15794-rodoviarias-e-hidroviarias.html
+ARQUIVO: Base_de_dados_ligacoes_rodoviarias_e_hidroviarias_2016.xlsx
+USO   : Peso de aresta = VAR07 (frequência total de saídas de transporte público
+          entre municípios). COBRE O ESTADO TODO (~4.800 pares SP-SP) - a fonte
+          de fluxo com maior cobertura. Processado -> ibge_ligacoes_sp.csv.
+        Dicionário: VAR03=custo, VAR04=tempo, VAR05/06=freq hidro/rodo,
+          VAR07=freq total (peso usado), VAR08-11=coords, VAR14=custo/tempo.
+
+PASTA : Origem_Destinos_2023/                                            [PESO][DIC]
+FONTE : Metrô-SP / Fundação SEADE - Pesquisa Origem-Destino 2023
+LINK  : https://transparencia.metrosp.com.br/dataset/pesquisa-origem-e-destino-2023-anexos
+ARQUIVOS: Banco2023_divulgacao_190225.dbf (~79 MB; viagens, com FE_VIA)
+          Municipios_2023.shp (dicionário: NumeroMuni -> CD_IBGE)            [DIC]
+USO   : Peso de aresta = viagens expandidas (fluxo REAL de pessoas) por par.
+          Cobre só a Região Metropolitana, mas é o que conecta o Ferraz à
+          capital. Processado -> od_municipios_fluxo.csv. O shapefile traduz os
+          códigos OD para código IBGE (usado também nos Grafos #2 e #3).
+
+================================================================================
+5. FONTES COLETADAS MAS NÃO USADAS (referência)
+================================================================================
+- IBGE - Censo / Deslocamento Pendular - Arranjos Populacionais (SIDRA 10329)
+  LINK: https://sidra.ibge.gov.br/Tabela/10329
+  Status: listada como fonte de fluxo populacional, mas NÃO há pasta/leitura
+  correspondente nos scripts atuais. Candidata a fonte adicional de peso
+  (pendularidade) se quiser enriquecer os grafos no futuro.
+
+================================================================================
+RESUMO: QUEM USA O QUÊ
+================================================================================
+  1_grafo_rodoviario_sp.R   (Grafo #1) lê: SP_Municipios_2024, Sistema
+       Rodoviário Estadual, GEOFT_TRECHO_RODOVIARIO_FEDERAL, BC250.
+  0_inventario_fontes_peso.R (Inventário) lê: ARTESP, DER-SP VDM,
+       Origem_Destinos_2023, Ligações IBGE -> gera os CSVs de peso.
+  2_grafo_pesos_fundidos.R  (Grafo #2) e
+  3_grafo_atalhos_fluxo.R   (Grafo #3) leem: SP_Municipios_2024 e o dicionário
+       OD (Origem_Destinos_2023), mais os CSVs/W_pesos já processados.
+
+OBSERVAÇÕES
+  - CRS: shapefiles trazem SIRGAS 2000 (EPSG 4674); distâncias são calculadas
+    em UTM 23S (EPSG 31983, métrico).
+  - Cada ".shp" depende dos arquivos irmãos (.dbf/.shx/.prj): copie a pasta toda.
+  - VDM e ARTESP = fluxo de VEÍCULOS; OD e IBGE = fluxo/oferta de PESSOAS.
+================================================================================
